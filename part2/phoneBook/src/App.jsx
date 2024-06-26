@@ -2,12 +2,23 @@ import { useState } from 'react'
 
 const App = () => {
   const [persons, setPersons] = useState([
-    { name: 'Arto Hellas' }
-  ]) 
-  const [newName, setNewName] = useState('')
+    { name: 'Arto Hellas', phoneNumber: '123 -456-7890'},
+    { name: 'Michael Doan', phoneNumber: '666 666 666'},
+    { name: 'Anna Doan', phoneNumber: '555 555 555 555'},
+    { name: 'Therese Doan', phoneNumber: '444 444 444 444'}
 
-  const Person = ({name, key}) =>{
-    return (<li key = {key}>{name}</li>)
+  ])
+  
+  
+  const [newName, setNewName] = useState('')
+  const [newPhoneNumber, setNumber] = useState('')
+  const [searchValue, setSearchValue] = useState('')
+  const [searchPerson, setSearchPerson] = useState('')
+  const [filteredPerson, setFilteredPerson] = useState([])
+ 
+
+  const Person = ({name, key, phoneNumber}) =>{
+    return (<li key = {key}>{name} {phoneNumber}</li>)
   }
 
   const checkPhoneBook = (existingNames, newName) =>{
@@ -25,7 +36,8 @@ const App = () => {
     checkPhoneBook(persons, newName)
     event.preventDefault()
     const newNameObject = {
-      name: newName
+      name: newName,
+      phoneNumber: newPhoneNumber
     }
     setPersons([...persons, newNameObject]); // Append newNameObject to persons array
     setNewName('')
@@ -33,18 +45,38 @@ const App = () => {
   }
 
   const handleNameChange = (event) => {
-    console.log(event.target.value)
+    
     setNewName(event.target.value)
   }
+
+  const handleNumberChange = (event) => {
+    
+    setNumber(event.target.value)
+  }
+
+  const handleSearchPerson = (event) => {
+    setSearchPerson(event.target.value);
+
+    const filterItems = persons.filter(person => person.name.includes(event.target.value))
+    console.log(filterItems)
+    setFilteredPerson(filterItems)
+  };
 
 
   return (
     <div>
+      
+
+
       <h2>Phonebook</h2>
-      <div>debug: {newName}</div>
+      <div>Filter shown with: <input value = {searchPerson} onChange = {handleSearchPerson}></input></div>
+      <div>Search Value: {searchPerson}</div>
       <form onSubmit = {addPerson}>
         <div>
           name: <input value = {newName} onChange={handleNameChange} />
+        </div>
+        <div>
+        Phone Number: <input value = {newPhoneNumber} onChange = {handleNumberChange}></input>
         </div>
         <div>
           <button type="submit">add</button>
@@ -53,11 +85,12 @@ const App = () => {
       <h2>Numbers</h2>
       
       <ul>
-        {persons.map((person, i) => (
-          <Person key = {i} name = {person.name}/>
+        {filteredPerson.map((person, i) => (
+          <Person key = {i} name = {person.name} phoneNumber = {person.phoneNumber}/>
           
         ))}
       </ul>
+      
       ...
     </div>
   )
