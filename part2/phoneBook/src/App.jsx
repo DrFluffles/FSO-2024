@@ -1,13 +1,21 @@
-import { useState } from 'react'
+
+import { useState, useEffect } from 'react'
+import axios from 'axios'
 
 const App = () => {
-  const [persons, setPersons] = useState([
-    { name: 'Arto Hellas', phoneNumber: '123 -456-7890'},
-    { name: 'Michael Doan', phoneNumber: '666 666 666'},
-    { name: 'Anna Doan', phoneNumber: '555 555 555 555'},
-    { name: 'Therese Doan', phoneNumber: '444 444 444 444'}
+  const [persons, setPersons] = useState([])
 
-  ])
+  useEffect(() => {
+    console.log('effect')
+    axios
+      .get('http://localhost:3001/persons')
+      .then(response => {
+        console.log('promise fulfilled')
+        setPersons(response.data)
+      })
+  }, [])
+  console.log('render', persons.length, 'persons')
+
   
   
   const [newName, setNewName] = useState('')
@@ -98,21 +106,3 @@ const App = () => {
 
 export default App
 
-/*{persons.map(person =>
-  <Person name = {persons.name}/>
-)}*/
-/*
-persons.map((person) =>{
-  if(person.name === newName){
-    alert(`${newName} exist in the list`)
-    return;
-  }
-})*/
-
-/*for(let i = 0; i < persons.length; i++){
-      if(persons[i].name === newName){
-        alert(`${newName} exist in the list`)
-        break;
-      }
-      
-    }*/
