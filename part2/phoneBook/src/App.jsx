@@ -47,8 +47,7 @@ const App = () => {
   const checkPhoneBook = (existingNames, newName) =>{
     for(let i = 0; i < existingNames.length; i++){
       if(existingNames[i].name === newName){
-        alert(`${newName} exist in the list`)
-        break;
+        return true;
       }
       
    
@@ -56,7 +55,19 @@ const App = () => {
 }
 
   const addPerson = (event) =>{
-    checkPhoneBook(persons, newName)
+    if(checkPhoneBook(persons, newName)){
+      const existingPerson = persons.find(person => person.name === newName)
+      const updatedPerson = { ...existingPerson, phoneNumber: newPhoneNumber };
+      console.log('Updated Person:', updatedPerson);
+      phonebookService
+            .update(existingPerson.id, updatedPerson)
+            .then(returnedPerson => {
+                setPersons(persons.map(person => person.id !== existingPerson.id ? person : returnedPerson));
+                setNewName('');
+                setNumber('');
+            });
+    }
+    else {
     event.preventDefault()
     const newNameObject = {
       name: newName,
@@ -68,6 +79,7 @@ const App = () => {
       setPersons(persons.concat(returnedNameObject))
       setNewName('')
     })
+  }
     
     //setPersons([...persons, newNameObject]); // Append newNameObject to persons array
   }
@@ -83,11 +95,12 @@ const App = () => {
   }
 
   const handleSearchPerson = (event) => {
-    setSearchPerson(event.target.value);
+    
+    const searchValue = event.target.value;
+  setSearchPerson(searchValue);
 
-    const filterItems = persons.filter(person => person.name.includes(event.target.value))
-    console.log(filterItems)
-    setFilteredPerson(filterItems)
+    const filterItems = persons.filter(person => person.name && person.name.includes(searchValue));
+  setFilteredPerson(filterItems);
   };
 
 
@@ -113,8 +126,8 @@ const App = () => {
       <h2>Numbers</h2>
       
       <ul>
-        {filteredPerson.map((person, i) => (
-          <Person id = {i} name = {person.name} phoneNumber = {person.phoneNumber} onClick = {() => {deletePerson(person, i)}}/>
+        {filteredPerson.map((person) => (
+          <Person key = {person.id} name = {person.name} phoneNumber = {person.phoneNumber} onClick = {() => {deletePerson(person, person.key)}}/>
           
         ))}
       </ul>
@@ -125,4 +138,3 @@ const App = () => {
 }
 
 export default App
-
