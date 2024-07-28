@@ -1,6 +1,7 @@
 
 import { useState, useEffect } from 'react'
 import axios from 'axios'
+import phonebookService from './services/phonebook'
 
 const App = () => {
   const [persons, setPersons] = useState([])
@@ -25,8 +26,22 @@ const App = () => {
   const [filteredPerson, setFilteredPerson] = useState([])
  
 
-  const Person = ({name, key, phoneNumber}) =>{
-    return (<li key = {key}>{name} {phoneNumber}</li>)
+  const Person = ({name, key, phoneNumber, onClick}) =>{
+    return (<li id = {key}>{name} {phoneNumber} <button onClick ={onClick}>delete {name}</button></li>)
+  }
+
+  const deletePerson = (person, i) =>{
+    alert(person.name);
+    console.log(i);
+    
+    phonebookService
+    .deleteRecord(person.id)
+    .then(returnedNameObject => {
+      setPersons(persons.filter(person => person.id !== person.id))
+      console.log(returnedNameObject)
+    })
+    
+    
   }
 
   const checkPhoneBook = (existingNames, newName) =>{
@@ -47,9 +62,14 @@ const App = () => {
       name: newName,
       phoneNumber: newPhoneNumber
     }
-    setPersons([...persons, newNameObject]); // Append newNameObject to persons array
-    setNewName('')
+    phonebookService
+    .create(newNameObject)
+    .then(returnedNameObject => {
+      setPersons(persons.concat(returnedNameObject))
+      setNewName('')
+    })
     
+    //setPersons([...persons, newNameObject]); // Append newNameObject to persons array
   }
 
   const handleNameChange = (event) => {
@@ -94,7 +114,7 @@ const App = () => {
       
       <ul>
         {filteredPerson.map((person, i) => (
-          <Person key = {i} name = {person.name} phoneNumber = {person.phoneNumber}/>
+          <Person id = {i} name = {person.name} phoneNumber = {person.phoneNumber} onClick = {() => {deletePerson(person, i)}}/>
           
         ))}
       </ul>

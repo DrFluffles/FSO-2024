@@ -10,10 +10,10 @@ const App = () => {
 
   useEffect(() => {
     noteService
-      .getAll()
-      .then(initialNotes => {
-        setNotes(initialNotes)
-      })
+  .getAll()
+  .then(initialNotes => {
+    setNotes(initialNotes)
+  })
   }, [])
 
   const toggleImportanceOf = id => {
@@ -26,6 +26,13 @@ const App = () => {
     .then(returnedNote => {
       setNotes(notes.map(note => note.id !== id ? note : returnedNote))
     })
+    .catch(error => {
+      alert(
+        `the note '${note.content}' was already deleted from server`
+      )
+      setNotes(notes.filter(n => n.id !== id))
+    })
+
   }
 
   const addNote = (event) => {
