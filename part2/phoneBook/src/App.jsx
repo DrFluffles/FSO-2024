@@ -62,7 +62,7 @@ const App = () => {
       phonebookService
             .update(existingPerson.id, updatedPerson)
             .then(returnedPerson => {
-                setPersons(persons.map(person => person.id !== existingPerson.id ? person : returnedPerson));
+                setPersons(persons.map(person => person.id !== existingPerson.id ? person : updatedPerson));
                 setNewName('');
                 setNumber('');
             });
