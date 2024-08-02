@@ -2,7 +2,6 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
 import phonebookService from './services/phonebook'
-import './index.css'
 
 const App = () => {
   const [persons, setPersons] = useState([])
@@ -25,7 +24,6 @@ const App = () => {
   const [searchValue, setSearchValue] = useState('')
   const [searchPerson, setSearchPerson] = useState('')
   const [filteredPerson, setFilteredPerson] = useState([])
-  const [errorMessage, setErrorMessage] = useState('some error happened...')
  
 
   const Person = ({name, key, phoneNumber, onClick}) =>{
@@ -41,14 +39,6 @@ const App = () => {
     .then(returnedNameObject => {
       setPersons(persons.filter(person => person.id !== person.id))
       console.log(returnedNameObject)
-    })
-    .catch(error => {
-      setErrorMessage(
-        `Unable to delete ${person.name} person was already removed from server`
-      )
-      setTimeout(() => {
-        setErrorMessage(null)
-      }, 5000)
     })
     
     
@@ -75,18 +65,7 @@ const App = () => {
                 setPersons(persons.map(person => person.id !== existingPerson.id ? person : returnedPerson));
                 setNewName('');
                 setNumber('');
-            
-            })
-            .catch(error => {
-              setErrorMessage(
-                `Unable to add person was already removed from server`
-              )
-              setTimeout(() => {
-                setErrorMessage(null)
-              }, 5000)
-            })
-            
-            
+            });
     }
     else {
     event.preventDefault()
@@ -94,12 +73,6 @@ const App = () => {
       name: newName,
       phoneNumber: newPhoneNumber
     }
-    setErrorMessage(
-      `User ${newNameObject.name} person added`
-    )
-    setTimeout(() => {
-      setErrorMessage(null)
-    }, 5000)
     phonebookService
     .create(newNameObject)
     .then(returnedNameObject => {
@@ -130,19 +103,6 @@ const App = () => {
   setFilteredPerson(filterItems);
   };
 
-  const Notification = ({ message }) => {
-    console.log("Message", message);
-    if (message === null) {
-      return null
-    }
-  
-    return (
-      <div className='error'>
-        <h1>{message}</h1>
-      </div>
-    )
-  }
-
 
   return (
     <div>
@@ -150,7 +110,6 @@ const App = () => {
 
 
       <h2>Phonebook</h2>
-      <Notification message={errorMessage} />
       <div>Filter shown with: <input value = {searchPerson} onChange = {handleSearchPerson}></input></div>
       <div>Search Value: {searchPerson}</div>
       <form onSubmit = {addPerson}>
