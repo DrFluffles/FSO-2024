@@ -3,9 +3,10 @@ const app = express()
 const cors = require('cors')
 const PORT = process.env.PORT || 3001
 console.log("Testinnnnggggg")
-//app.use(express.static('dist'))
+app.use(express.static('dist'))
 app.use(cors())
 app.use(express.json())
+console.log("Testinnnnggggg")
 
 let notes = [
     {
@@ -80,3 +81,5 @@ const generateId = () => {
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
+
+console.log("Everything ran")
