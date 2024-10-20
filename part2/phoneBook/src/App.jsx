@@ -9,7 +9,7 @@ const App = () => {
   useEffect(() => {
     console.log('effect')
     axios
-      .get('http://localhost:3001/persons')
+      .get('/api/persons')
       .then(response => {
         console.log('promise fulfilled')
         setPersons(response.data)
@@ -26,8 +26,8 @@ const App = () => {
   const [filteredPerson, setFilteredPerson] = useState([])
  
 
-  const Person = ({name, key, phoneNumber, onClick}) =>{
-    return (<li id = {key}>{name} {phoneNumber} <button onClick ={onClick}>delete {name}</button></li>)
+  const Person = ({name, id, phoneNumber, onClick}) =>{
+    return (<li id = {id}>{name} {phoneNumber} <button onClick ={onClick}>delete {name}</button></li>)
   }
 
   const deletePerson = (person, i) =>{
@@ -37,8 +37,8 @@ const App = () => {
     phonebookService
     .deleteRecord(person.id)
     .then(returnedNameObject => {
-      setPersons(persons.filter(person => person.id !== person.id))
-      console.log(returnedNameObject)
+      setPersons(returnedNameObject)
+      console.log("Deleted ", returnedNameObject)
     })
     
     
@@ -52,6 +52,12 @@ const App = () => {
       
    
   }
+}
+const generateId = () => {
+  const maxId = persons.length > 0
+    ? Math.max(...persons.map(n => n.id))
+    : 0
+  return maxId + 1
 }
 
   const addPerson = (event) =>{
@@ -70,14 +76,17 @@ const App = () => {
     else {
     event.preventDefault()
     const newNameObject = {
+      //id: generateId(),
       name: newName,
       phoneNumber: newPhoneNumber
     }
     phonebookService
     .create(newNameObject)
     .then(returnedNameObject => {
-      setPersons(persons.concat(returnedNameObject))
+      console.log("Returned: ",returnedNameObject);
+      setPersons(persons.concat(newNameObject))
       setNewName('')
+      setNumber('')
     })
   }
     
@@ -110,7 +119,7 @@ const App = () => {
 
 
       <h2>Phonebook</h2>
-      <div>Filter shown with: <input value = {searchPerson} onChange = {handleSearchPerson}></input></div>
+      <div style = {{background: "green"}}>Filter shown with: <input value = {searchPerson} onChange = {handleSearchPerson}></input></div>
       <div>Search Value: {searchPerson}</div>
       <form onSubmit = {addPerson}>
         <div>
@@ -131,6 +140,8 @@ const App = () => {
           
         ))}
       </ul>
+      
+      
       
       ...
     </div>
