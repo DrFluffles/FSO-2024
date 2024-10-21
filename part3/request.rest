@@ -5,3 +5,5 @@ Content-Type: application/json
     "content":"testing if it works",
     "important":"true"
 }
+###
+GET http://localhost:3001/api/notes
