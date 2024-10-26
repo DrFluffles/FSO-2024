@@ -2,10 +2,12 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
 import phonebookService from './services/phonebook'
+import Notification from './components/Notification'
 
 const App = () => {
   const [persons, setPersons] = useState([])
 
+  
   useEffect(() => {
     console.log('effect')
     axios
@@ -15,8 +17,18 @@ const App = () => {
         setPersons(response.data)
       })
   }, [])
+  
   console.log('render', persons.length, 'persons')
-
+  
+ /*
+  useEffect(() => {
+    phonebookService
+    .getAll()
+    .then(allPeople => {
+      setPersons(allPeople)
+    })
+  }, [])
+  */
   
   
   const [newName, setNewName] = useState('')
@@ -24,6 +36,7 @@ const App = () => {
   const [searchValue, setSearchValue] = useState('')
   const [searchPerson, setSearchPerson] = useState('')
   const [filteredPerson, setFilteredPerson] = useState([])
+  const [errorMessage, setErrorMessage] = useState(null)
  
 
   const Person = ({name, id, phoneNumber, onClick}) =>{
@@ -33,12 +46,17 @@ const App = () => {
   const deletePerson = (person, i) =>{
     alert(person.name);
     console.log(i);
+    console.log("Name", person.name + "i:", i, +"personid:", person.id)
     
     phonebookService
     .deleteRecord(person.id)
     .then(returnedNameObject => {
-      setPersons(returnedNameObject)
+      //setPersons(returnedNameObject)
+      setPersons(persons.filter(p => p.id !== person.id));
       console.log("Deleted ", returnedNameObject)
+    })
+    .catch(error => {
+      console.error('Error deleting person: ', error)
     })
     
     
@@ -61,9 +79,13 @@ const generateId = () => {
 }
 
   const addPerson = (event) =>{
+    var pd = true;
     if(checkPhoneBook(persons, newName)){
+    alert("testing")
       const existingPerson = persons.find(person => person.name === newName)
       const updatedPerson = { ...existingPerson, phoneNumber: newPhoneNumber };
+      alert(existingPerson.id)
+      
       console.log('Updated Person:', updatedPerson);
       phonebookService
             .update(existingPerson.id, updatedPerson)
@@ -88,7 +110,11 @@ const generateId = () => {
       setNewName('')
       setNumber('')
     })
-  }
+    .catch(error => {
+      setErrorMessage(error.response.data.error)
+    })
+    }
+  
     
     //setPersons([...persons, newNameObject]); // Append newNameObject to persons array
   }
@@ -115,10 +141,8 @@ const generateId = () => {
 
   return (
     <div>
-      
-
-
       <h2>Phonebook</h2>
+      <Notification message = {errorMessage} />
       <div style = {{background: "green"}}>Filter shown with: <input value = {searchPerson} onChange = {handleSearchPerson}></input></div>
       <div>Search Value: {searchPerson}</div>
       <form onSubmit = {addPerson}>
