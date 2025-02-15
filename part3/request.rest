@@ -13,3 +13,9 @@ DELETE http://localhost:3001/api/notes/6715b9c1585806540bf80ccd
 
 ### 
 POST http://localhost:3001/api/notes/
+Content-Type: application/json
+
+{
+    "content":"michaelll",
+    "important":"true"
+}
