@@ -6,7 +6,7 @@ Content-Type: application/json
     "important":"false"
 }
 ###
-GET http://localhost:3001/api/notes/
+GET http://localhost:3001/api/users
 
 ####
 DELETE http://localhost:3001/api/notes/6715b9c1585806540bf80ccd
@@ -16,6 +16,27 @@ POST http://localhost:3001/api/notes/
 Content-Type: application/json
 
 {
-    "content":"michaelll",
-    "important":"true"
+    "content":"something222",
+    "important":"true",
+    "userId": "67bac6df0660c30f78f9298c"
+    
+    
+}
+
+###
+POST http://localhost:3001/api/users
+Content-Type: application/json
+
+{
+    "username": "root1",
+    "name": "Superuser1",
+    "password": "salainen"
+}
+###
+POST http://localhost:3001/api/login
+Content-type: application/json
+
+{
+    "username":"root",
+    "password":"salainen"
 }
