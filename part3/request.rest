@@ -6,7 +6,7 @@ Content-Type: application/json
     "important":"false"
 }
 ###
-GET http://localhost:3001/api/users
+GET http://localhost:3001/api/notes
 
 ####
 DELETE http://localhost:3001/api/notes/6715b9c1585806540bf80ccd
@@ -14,11 +14,11 @@ DELETE http://localhost:3001/api/notes/6715b9c1585806540bf80ccd
 ### 
 POST http://localhost:3001/api/notes/
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InJvb3QiLCJpZCI6IjY3YmFjNmRmMDY2MGMzMGY3OGY5Mjk4YyIsImlhdCI6MTc0MDgwNzAwNywiZXhwIjoxNzQwODEwNjA3fQ.BPQxn20lsEAwt2GhiQ_1CEmJSYYpW7r1iZTk5SZmTzI
 
 {
     "content":"something222",
-    "important":"true",
-    "userId": "67bac6df0660c30f78f9298c"
+    "important":"true"
     
     
 }
