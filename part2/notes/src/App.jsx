@@ -96,7 +96,7 @@ const App = () => {
 
   const loginForm = () => {
     const hideWhenVisible = { display: loginVisible ? "none" : "" };
-    const showWhenVisible = { display••••••••: loginVisible ? "" : "none" };
+    const showWhenVisible = { display: loginVisible ? "" : "none" };
 
     return (
       <div>
