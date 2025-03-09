@@ -1,22 +1,24 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Blog from "./components/Blog";
 import blogService from "./services/blogs";
 import loginService from "./services/login";
 import Notification from "./components/Notification";
 import Togglable from "./components/Togglable";
+import BlogForm from "./components/BlogForm";
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [title, setTitle] = useState("");
-  const [author, setAuthor] = useState("");
-  const [url, setUrl] = useState("");
+  //const [title, setTitle] = useState("");
+  //const [author, setAuthor] = useState("");
+  //const [url, setUrl] = useState("");
   const [user, setUser] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
+  const blogFormRef = useRef();
 
   useEffect(() => {
-    blogService.getAll().then((blogs) => setBlogs(blogs));
+    blogService.getAll().then((initialBlogs) => setBlogs(initialBlogs));
   }, []);
 
   useEffect(() => {
@@ -46,27 +48,28 @@ const App = () => {
     }
   };
 
-  const handlePost = async (event) => {
-    event.preventDefault();
-    if (user) {
-      try {
-        const blog = {
-          title: title,
-          author: author,
-          url: url,
-          likes: 0,
-        };
-        blogService.create(blog).then((returnedBlog) => {
-          setBlogs(blogs.concat(returnedBlog));
-          setTitle("");
-          setAuthor("");
-          setUrl("");
-        });
-        setErrorMessage("Note added");
-      } catch (exception) {
-        setErrorMessage("Failed to add");
-      }
+  const handlePost = async (blogObject) => {
+    blogFormRef.current.toggleVisibility();
+    blogService.create(blogObject).then((returnedBlog) => {
+      setBlogs(blogs.concat(returnedBlog));
+    });
+  };
+
+  const increaseLike = async (id, updatedBlog) => {
+    try {
+      const returnedBlog = await blogService.update(id, updatedBlog);
+      setBlogs(blogs.map((blog) => (blog.id !== id ? blog : returnedBlog)));
+    } catch (error) {
+      setErrorMessage(`Failed to update likes for '${updatedBlog.title}'`);
+      setTimeout(() => setErrorMessage(null), 5000);
     }
+  };
+  //console.log(JSON.stringify(blogs));
+  //handleLike("67cb8ef9912c56c417789d73");
+
+  const removeBlog = async (id) => {
+    await blogService.deleteBlog(id);
+    setBlogs(blogs.filter((blog) => blog.id !== id));
   };
 
   const loginForm = () => (
@@ -93,39 +96,6 @@ const App = () => {
     </form>
   );
 
-  const blogForm = () => (
-    <form onSubmit={handlePost}>
-      <div>
-        Title:
-        <input
-          type="text"
-          value={title}
-          name="Title"
-          onChange={({ target }) => setTitle(target.value)}
-        />
-      </div>
-      <div>
-        Author:
-        <input
-          type="text"
-          value={author}
-          title="Author"
-          onChange={({ target }) => setAuthor(target.value)}
-        />
-      </div>
-      <div>
-        Url:
-        <input
-          type="text"
-          value={url}
-          test="Url"
-          onChange={({ target }) => setUrl(target.value)}
-        />
-      </div>
-      <button type="Submit">Create</button>
-    </form>
-  );
-
   const logout = (event) => {
     event.preventDefault();
     console.log("Logout");
@@ -144,10 +114,19 @@ const App = () => {
           <p>
             Hello {user.username} <button onClick={logout}>Logout</button>
           </p>
-          <Togglable buttonLabel="new note">{blogForm()}</Togglable>
-          {blogs.map((blog) => (
-            <Blog key={blog.id} blog={blog} />
-          ))}
+          <Togglable buttonLabel="new note" ref={blogFormRef}>
+            <BlogForm createBlog={handlePost}></BlogForm>
+          </Togglable>
+          {blogs
+            .sort((a, b) => b.likes - a.likes)
+            .map((blog) => (
+              <Blog
+                key={blog.id}
+                blog={blog}
+                handleLike={increaseLike}
+                handleDelete={removeBlog}
+              />
+            ))}
         </>
       ) : (
         <p>No blogs to display</p>
