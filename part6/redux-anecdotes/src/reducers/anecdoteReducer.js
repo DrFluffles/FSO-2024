@@ -1,4 +1,5 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, current } from "@reduxjs/toolkit";
+import { showMessage } from "./messageReducer";
 
 const anecdotesAtStart = [
   "If it hurts, do it more often",
@@ -26,6 +27,7 @@ const anecdoteSlice = createSlice({
   reducers: {
     createAnecdote(state, action) {
       const content = action.payload;
+      console.log(current(state));
       state.push({
         content: content,
         id: getId(),
@@ -36,6 +38,8 @@ const anecdoteSlice = createSlice({
       const id = action.payload;
       const noteToVote = state.find((n) => n.id === id);
       const changeAnecdote = { ...noteToVote, votes: noteToVote.votes + 1 };
+
+      console.log(current(state));
       return state.map((note) => (note.id == id ? changeAnecdote : note));
     },
   },
