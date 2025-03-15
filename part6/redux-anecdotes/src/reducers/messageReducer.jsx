@@ -6,7 +6,7 @@ const messageSlice = createSlice({
   initialState,
   reducers: {
     showMessage(state, action) {
-      state = "The following anecdote has been added" + action.payload;
+      state = action.payload;
       return state;
     },
     showVote(state, action) {
@@ -20,4 +20,15 @@ const messageSlice = createSlice({
   },
 });
 export const { showMessage, showVote, removeMessage } = messageSlice.actions;
+
+export const setNotification = (content, time) => {
+  return async (dispatch) => {
+    dispatch(showMessage(content));
+
+    setTimeout(() => {
+      dispatch(removeMessage());
+    }, time);
+  };
+};
+
 export default messageSlice.reducer;
