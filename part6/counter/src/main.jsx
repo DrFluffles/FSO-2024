@@ -5,8 +5,13 @@ import ReactDOM from "react-dom/client";
 import { Provider } from "react-redux";
 
 import App from "./App";
-import noteReducer, { createNote } from "./reducers/noteReducer";
 import filterReducer, { filterChange } from "./reducers/filterReducer";
+import noteService from "./services/notes";
+import noteReducer, {
+  appendNote,
+  setNotes,
+  createNote,
+} from "./reducers/noteReducer";
 
 const store = configureStore({
   reducer: {
@@ -14,6 +19,12 @@ const store = configureStore({
     filter: filterReducer,
   },
 });
+
+noteService.getAll().then((notes) =>
+  notes.forEach((note) => {
+    store.dispatch(setNotes(notes));
+  })
+);
 
 store.subscribe(() => console.log(store.getState()));
 store.dispatch(filterChange("IMPORTANT"));
