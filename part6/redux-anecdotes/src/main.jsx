@@ -14,11 +14,11 @@ const store = configureStore({
     message: messageReducer,
   },
 });
-
+/*
 anecdoteService
   .getAll()
   .then((anecdotes) => store.dispatch(setAnecdotes(anecdotes)));
-
+*/
 store.subscribe(() => console.log(store.getState()));
 
 ReactDOM.createRoot(document.getElementById("root")).render(

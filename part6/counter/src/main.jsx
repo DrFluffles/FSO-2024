@@ -13,24 +13,7 @@ import noteReducer, {
   createNote,
 } from "./reducers/noteReducer";
 
-const store = configureStore({
-  reducer: {
-    notes: noteReducer,
-    filter: filterReducer,
-  },
-});
-
-noteService.getAll().then((notes) =>
-  notes.forEach((note) => {
-    store.dispatch(setNotes(notes));
-  })
-);
-
-store.subscribe(() => console.log(store.getState()));
-store.dispatch(filterChange("IMPORTANT"));
-store.dispatch(
-  createNote("combineReducers forms one reducer from many simple reducers")
-);
+import store from "./store";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <Provider store={store}>
